@@ -15,7 +15,8 @@ Each track, work and break, has its own source and rules:
   in the browser's IndexedDB, so it survives reloads on that browser.
 - **Play once**: do not loop. Off means loop.
 - **Resume where it left off**: continue from where the track was paused or cut.
-  Off means start from the beginning at each phase start.
+  A track that finished starts over on its next play. Off means start from the
+  beginning at each phase start.
 - **Stop after N seconds**: cut playback after N seconds each time it starts.
   Blank means no limit.
 
@@ -63,3 +64,4 @@ npm test
 - Playback needs one click on Start. Browsers block sound that starts without a
   user gesture.
 - Some YouTube videos refuse to embed. Pick another link if a player stays blank.
+  Inside a playlist such entries are skipped.
