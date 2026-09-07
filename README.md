@@ -11,8 +11,9 @@ A Pomodoro timer locked to the wall clock. Press Start once and it loops all day
 
 Each track, work and break, has its own source and rules:
 
-- **Source**: a YouTube video or playlist link, or an audio file from your disk. The file is kept
-  in the browser's IndexedDB, so it survives reloads on that browser.
+- **Source**: a YouTube video or playlist link, an audio file from your disk, or
+  silence. The file is kept in the browser's IndexedDB, so it survives reloads on
+  that browser. Silence just pauses the other track.
 - **Play once**: do not loop. Off means loop.
 - **Resume where it left off**: continue from where the track was paused or cut.
   A track that finished starts over on its next play. Off means start from the

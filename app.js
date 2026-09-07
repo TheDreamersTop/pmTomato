@@ -82,8 +82,11 @@ function bindForm(kind) {
   show();
 }
 
+const SILENT = { play() {}, pause() {} };
+
 async function buildPlayer(kind) {
   const s = settings[kind];
+  if (s.source === 'none') return SILENT;
   const opts = { loop: !s.once };
   let base;
   if (s.source === 'youtube') {

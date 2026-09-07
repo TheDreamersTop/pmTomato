@@ -41,6 +41,7 @@ input.url { display: block; width: 100%; padding: 8px 10px; font-size: 14px; bor
 .filename { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card[data-source="youtube"] .file { display: none; }
 .card[data-source="file"] input.url, .card[data-source="file"] .player { display: none; }
+.card[data-source="none"] input.url, .card[data-source="none"] .file, .card[data-source="none"] .player, .card[data-source="none"] .row { display: none; }
 input[type="number"] { width: 64px; padding: 6px 8px; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; }
 .player { margin-top: 12px; }
 .player iframe, .player:empty { width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; background: #eee; display: block; }
