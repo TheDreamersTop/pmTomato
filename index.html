@@ -20,23 +20,46 @@
       <div id="clock" class="clock">00:00:00</div>
     </section>
 
+    <section class="tracks">
+      <div class="card" id="card-work">
+        <h2>Work music</h2>
+        <div class="source">
+          <label><input type="radio" name="source-work" value="youtube"> YouTube link</label>
+          <label><input type="radio" name="source-work" value="file"> Audio file</label>
+        </div>
+        <input class="url" id="url-work" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off">
+        <div class="file">
+          <label class="pick">Choose file<input id="file-work" type="file" accept="audio/*"></label>
+          <span id="filename-work" class="filename"></span>
+        </div>
+        <label class="row"><input id="once-work" type="checkbox"> Play once</label>
+        <label class="row">Stop after <input id="limit-work" type="number" min="1" step="1" placeholder="∞"> seconds</label>
+        <div class="player" id="player-work"></div>
+      </div>
+
+      <div class="card" id="card-break">
+        <h2>Break music</h2>
+        <div class="source">
+          <label><input type="radio" name="source-break" value="youtube"> YouTube link</label>
+          <label><input type="radio" name="source-break" value="file"> Audio file</label>
+        </div>
+        <input class="url" id="url-break" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off">
+        <div class="file">
+          <label class="pick">Choose file<input id="file-break" type="file" accept="audio/*"></label>
+          <span id="filename-break" class="filename"></span>
+        </div>
+        <label class="row"><input id="once-break" type="checkbox"> Play once</label>
+        <label class="row">Stop after <input id="limit-break" type="number" min="1" step="1" placeholder="∞"> seconds</label>
+        <div class="player" id="player-break"></div>
+      </div>
+    </section>
+
     <section class="controls">
-      <label>Work music
-        <input id="work-url" type="url" placeholder="YouTube link" autocomplete="off">
-      </label>
-      <label>Break music
-        <input id="break-url" type="url" placeholder="YouTube link" autocomplete="off">
-      </label>
       <div class="buttons">
         <button id="start">Start</button>
         <button id="stop" disabled>Stop</button>
       </div>
-      <p id="status" class="status">Paste two links, press Start.</p>
-    </section>
-
-    <section class="players">
-      <div class="player"><h2>Work</h2><div id="player-work"></div></div>
-      <div class="player"><h2>Break</h2><div id="player-break"></div></div>
+      <p id="status" class="status">Set both tracks, press Start. Settings are saved as you go.</p>
     </section>
   </main>
   <script type="module" src="app.js"></script>

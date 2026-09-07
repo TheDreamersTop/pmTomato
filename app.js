@@ -1,13 +1,14 @@
 import { phaseAt } from './schedule.js';
 import { parseVideoId, createPlayer } from './youtube.js';
+import { createAudioPlayer } from './audio.js';
 import { createController } from './controller.js';
+import { withPolicy } from './policy.js';
+import { loadSettings, saveSettings } from './settings.js';
+import { saveFile, loadFile } from './store.js';
 
+const KINDS = ['work', 'break'];
 const $ = (id) => document.getElementById(id);
-const els = {
-  workUrl: $('work-url'), breakUrl: $('break-url'),
-  start: $('start'), stop: $('stop'),
-  phase: $('phase'), countdown: $('countdown'), clock: $('clock'), status: $('status'),
-};
+const els = { start: $('start'), stop: $('stop'), phase: $('phase'), countdown: $('countdown'), clock: $('clock'), status: $('status') };
 
 // Dev override: ?at=HH:MM:SS shifts the clock so phase changes can be watched now.
 const offset = (() => {
@@ -20,22 +21,25 @@ const offset = (() => {
 })();
 const now = () => new Date(Date.now() + offset);
 
-const players = {};
+const settings = loadSettings(localStorage);
+const persist = () => saveSettings(localStorage, settings);
+const yt = {};
+const audio = {};
 let controller = null;
-let timer = null;
 
 const pad = (n) => String(n).padStart(2, '0');
 const hms = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 const mmss = (ms) => { const s = Math.ceil(ms / 1000); return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; };
+const label = (phase) => (phase === 'work' ? 'Work' : 'Break');
 
 function render() {
   const t = now();
   const { phase, remainingMs } = phaseAt(t);
   els.clock.textContent = hms(t);
-  els.phase.textContent = phase === 'work' ? 'Work' : 'Break';
+  els.phase.textContent = label(phase);
   els.countdown.textContent = mmss(remainingMs);
   document.body.dataset.phase = phase;
-  document.title = `${mmss(remainingMs)} ${phase === 'work' ? 'Work' : 'Break'} · pmTomato`;
+  document.title = `${mmss(remainingMs)} ${label(phase)} · pmTomato`;
   if (controller?.running) controller.setPhase(phase);
 }
 
@@ -44,23 +48,68 @@ function say(msg, isError = false) {
   els.status.classList.toggle('error', isError);
 }
 
-async function start() {
-  const ids = { work: parseVideoId(els.workUrl.value), break: parseVideoId(els.breakUrl.value) };
-  if (!ids.work || !ids.break) return say('Paste a YouTube link for both work and break.', true);
-  localStorage.setItem('pmTomato.workUrl', els.workUrl.value);
-  localStorage.setItem('pmTomato.breakUrl', els.breakUrl.value);
+// Settings form: one block per track, every change saved at once.
+function bindForm(kind) {
+  const s = settings[kind];
+  const sourceRadios = document.querySelectorAll(`input[name="source-${kind}"]`);
+  const url = $(`url-${kind}`), file = $(`file-${kind}`), fileName = $(`filename-${kind}`);
+  const once = $(`once-${kind}`), limit = $(`limit-${kind}`), card = $(`card-${kind}`);
 
-  els.start.disabled = true;
-  say('Loading players…');
-  for (const kind of ['work', 'break']) {
-    if (players[kind]) players[kind].load(ids[kind]);
-    else players[kind] = await createPlayer(`player-${kind}`, ids[kind]);
+  const show = () => {
+    sourceRadios.forEach((r) => { r.checked = r.value === s.source; });
+    card.dataset.source = s.source;
+    url.value = s.url;
+    fileName.textContent = s.fileName || 'No file yet';
+    once.checked = s.once;
+    limit.value = s.limitSec ?? '';
+  };
+  sourceRadios.forEach((r) => r.addEventListener('change', () => { s.source = r.value; persist(); show(); }));
+  url.addEventListener('input', () => { s.url = url.value; persist(); });
+  once.addEventListener('change', () => { s.once = once.checked; persist(); });
+  limit.addEventListener('input', () => { const n = Number(limit.value); s.limitSec = n > 0 ? n : null; persist(); });
+  file.addEventListener('change', async () => {
+    const f = file.files[0];
+    if (!f) return;
+    await saveFile(kind, f);
+    s.fileName = f.name;
+    persist();
+    show();
+  });
+  show();
+}
+
+async function buildPlayer(kind) {
+  const s = settings[kind];
+  const opts = { loop: !s.once };
+  let base;
+  if (s.source === 'youtube') {
+    const id = parseVideoId(s.url);
+    if (!id) throw new Error(`${label(kind)}: paste a YouTube link.`);
+    if (yt[kind]) yt[kind].load(id, opts);
+    else { yt[kind] = await createPlayer(`player-${kind}`, id); yt[kind].load(id, opts); }
+    base = yt[kind];
+  } else {
+    const blob = await loadFile(kind);
+    if (!blob) throw new Error(`${label(kind)}: choose an audio file.`);
+    audio[kind] ??= createAudioPlayer(`audio-${kind}`);
+    audio[kind].load(blob, opts);
+    base = audio[kind];
   }
-  controller ??= createController(players);
+  return withPolicy(base, { once: s.once, limitSec: s.limitSec });
+}
+
+async function start() {
+  els.start.disabled = true;
+  say('Loading…');
+  Object.values(yt).forEach((p) => p.pause());
+  Object.values(audio).forEach((p) => p.pause());
+  const players = {};
+  for (const kind of KINDS) players[kind] = await buildPlayer(kind);
+  controller = createController(players);
   controller.start(phaseAt(now()).phase);
   els.stop.disabled = false;
   document.body.classList.add('running');
-  say('Running. Music swaps on its own at :25, :30, :55 and :00.');
+  say('Running. Music swaps at :25, :30, :55 and :00.');
 }
 
 function stop() {
@@ -71,9 +120,8 @@ function stop() {
   say('Stopped.');
 }
 
-els.workUrl.value = localStorage.getItem('pmTomato.workUrl') ?? '';
-els.breakUrl.value = localStorage.getItem('pmTomato.breakUrl') ?? 'https://www.youtube.com/watch?v=lTRiuFIWV54';
+KINDS.forEach(bindForm);
 els.start.addEventListener('click', () => start().catch((e) => { say(e.message, true); els.start.disabled = false; }));
 els.stop.addEventListener('click', stop);
 render();
-timer = setInterval(render, 500);
+setInterval(render, 500);

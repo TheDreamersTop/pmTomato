@@ -24,20 +24,28 @@ function loadApi() {
   return apiPromise;
 }
 
-// Wraps a YouTube iframe player behind play/pause/load.
+// Wraps a YouTube iframe player behind play/pause/seekTo/load.
 export async function createPlayer(elementId, videoId) {
   const YT = await loadApi();
+  let loop = true;
   const player = await new Promise((resolve) => {
     const p = new YT.Player(elementId, {
       videoId,
       playerVars: { playsinline: 1 },
-      events: { onReady: () => resolve(p) },
+      events: {
+        onReady: () => resolve(p),
+        onStateChange: (e) => { if (loop && e.data === YT.PlayerState.ENDED) { p.seekTo(0); p.playVideo(); } },
+      },
     });
   });
   let current = videoId;
   return {
     play: () => player.playVideo(),
     pause: () => player.pauseVideo(),
-    load(id) { if (id !== current) { current = id; player.cueVideoById(id); } },
+    seekTo: (s) => player.seekTo(s, true),
+    load(id, opts) {
+      loop = opts.loop;
+      if (id !== current) { current = id; player.cueVideoById(id); }
+    },
   };
 }

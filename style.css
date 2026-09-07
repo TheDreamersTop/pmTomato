@@ -19,7 +19,7 @@ body {
   color: var(--fg);
   transition: background .6s, color .6s;
 }
-main { max-width: 720px; margin: 0 auto; padding: 32px 20px 48px; }
+main { max-width: 760px; margin: 0 auto; padding: 32px 20px 48px; }
 h1 { margin: 0; font-size: 28px; }
 .sub { margin: 4px 0 24px; color: var(--muted); }
 
@@ -28,16 +28,27 @@ h1 { margin: 0; font-size: 28px; }
 #countdown { font-size: 96px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .clock { color: var(--muted); font-variant-numeric: tabular-nums; }
 
-.controls { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-label { display: block; margin-bottom: 12px; font-size: 14px; color: var(--muted); }
-input { display: block; width: 100%; margin-top: 4px; padding: 10px; font-size: 15px; border: 1px solid #ddd; border-radius: 8px; }
-.buttons { display: flex; gap: 8px; margin-top: 8px; }
+.tracks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); font-size: 14px; }
+.card h2 { margin: 0 0 10px; font-size: 15px; }
+.source { display: flex; gap: 16px; margin-bottom: 10px; }
+.source label, .row { display: flex; align-items: center; gap: 6px; }
+.row { margin-top: 8px; }
+input.url { display: block; width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; }
+.file { display: flex; align-items: center; gap: 10px; }
+.pick { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.pick input { display: none; }
+.filename { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card[data-source="youtube"] .file { display: none; }
+.card[data-source="file"] input.url, .card[data-source="file"] .player { display: none; }
+input[type="number"] { width: 64px; padding: 6px 8px; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; }
+.player { margin-top: 12px; }
+.player iframe, .player:empty { width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; background: #eee; display: block; }
+
+.controls { margin-top: 20px; }
+.buttons { display: flex; gap: 8px; }
 button { flex: 1; padding: 12px; font-size: 16px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
 button:disabled { opacity: .4; cursor: default; }
 .status { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
 .status.error { color: var(--accent); }
-
-.players { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
-.player h2 { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
-.player iframe, .player > div:not(:has(iframe)) { width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; background: #ddd; }
-@media (max-width: 560px) { .players { grid-template-columns: 1fr; } #countdown { font-size: 72px; } }
+@media (max-width: 600px) { .tracks { grid-template-columns: 1fr; } #countdown { font-size: 72px; } }
