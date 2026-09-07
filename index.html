@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pmTomato</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🍅</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-phase="work">
+  <main>
+    <header>
+      <h1>🍅 pmTomato</h1>
+      <p class="sub">Work at :00 and :30. Break at :25 and :55. Music follows.</p>
+    </header>
+
+    <section class="timer">
+      <div id="phase">Work</div>
+      <div id="countdown">25:00</div>
+      <div id="clock" class="clock">00:00:00</div>
+    </section>
+
+    <section class="controls">
+      <label>Work music
+        <input id="work-url" type="url" placeholder="YouTube link" autocomplete="off">
+      </label>
+      <label>Break music
+        <input id="break-url" type="url" placeholder="YouTube link" autocomplete="off">
+      </label>
+      <div class="buttons">
+        <button id="start">Start</button>
+        <button id="stop" disabled>Stop</button>
+      </div>
+      <p id="status" class="status">Paste two links, press Start.</p>
+    </section>
+
+    <section class="players">
+      <div class="player"><h2>Work</h2><div id="player-work"></div></div>
+      <div class="player"><h2>Break</h2><div id="player-break"></div></div>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

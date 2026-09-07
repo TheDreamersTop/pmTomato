@@ -1,0 +1,15 @@
+{
+  "name": "pmtomato",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Wall-clock Pomodoro that swaps work music and break music automatically.",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "serve": "python3 -m http.server 8766 --bind 127.0.0.1"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}
