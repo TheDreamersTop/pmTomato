@@ -24,15 +24,16 @@
       <div class="card" id="card-work">
         <h2>Work music</h2>
         <div class="source">
-          <label><input type="radio" name="source-work" value="youtube"> YouTube link</label>
+          <label><input type="radio" name="source-work" value="youtube"> YouTube</label>
           <label><input type="radio" name="source-work" value="file"> Audio file</label>
         </div>
-        <input class="url" id="url-work" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off">
+        <input class="url" id="url-work" type="url" placeholder="YouTube video or playlist link" autocomplete="off">
         <div class="file">
           <label class="pick">Choose file<input id="file-work" type="file" accept="audio/*"></label>
           <span id="filename-work" class="filename"></span>
         </div>
         <label class="row"><input id="once-work" type="checkbox"> Play once</label>
+        <label class="row"><input id="resume-work" type="checkbox"> Resume where it left off</label>
         <label class="row">Stop after <input id="limit-work" type="number" min="1" step="1" placeholder="∞"> seconds</label>
         <div class="player" id="player-work"></div>
       </div>
@@ -40,15 +41,16 @@
       <div class="card" id="card-break">
         <h2>Break music</h2>
         <div class="source">
-          <label><input type="radio" name="source-break" value="youtube"> YouTube link</label>
+          <label><input type="radio" name="source-break" value="youtube"> YouTube</label>
           <label><input type="radio" name="source-break" value="file"> Audio file</label>
         </div>
-        <input class="url" id="url-break" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off">
+        <input class="url" id="url-break" type="url" placeholder="YouTube video or playlist link" autocomplete="off">
         <div class="file">
           <label class="pick">Choose file<input id="file-break" type="file" accept="audio/*"></label>
           <span id="filename-break" class="filename"></span>
         </div>
         <label class="row"><input id="once-break" type="checkbox"> Play once</label>
+        <label class="row"><input id="resume-break" type="checkbox"> Resume where it left off</label>
         <label class="row">Stop after <input id="limit-break" type="number" min="1" step="1" placeholder="∞"> seconds</label>
         <div class="player" id="player-break"></div>
       </div>

@@ -21,6 +21,7 @@ describe('settings survive a reload and never lose a field', () => {
     const got = loadSettings(s);
     expect(got.work.url).toBe('old');
     expect(got.work.once).toBe(DEFAULTS.work.once);
+    expect(got.work.resume).toBe(true);
     expect(got.break).toEqual(DEFAULTS.break);
   });
 

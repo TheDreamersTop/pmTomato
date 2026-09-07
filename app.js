@@ -1,5 +1,5 @@
 import { phaseAt } from './schedule.js';
-import { parseVideoId, createPlayer } from './youtube.js';
+import { parseYouTube, createPlayer } from './youtube.js';
 import { createAudioPlayer } from './audio.js';
 import { createController } from './controller.js';
 import { withPolicy } from './policy.js';
@@ -25,6 +25,7 @@ const settings = loadSettings(localStorage);
 const persist = () => saveSettings(localStorage, settings);
 const yt = {};
 const audio = {};
+const blobs = {}; // loaded once per track, so a re-Start keeps the playback position
 let controller = null;
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -53,7 +54,7 @@ function bindForm(kind) {
   const s = settings[kind];
   const sourceRadios = document.querySelectorAll(`input[name="source-${kind}"]`);
   const url = $(`url-${kind}`), file = $(`file-${kind}`), fileName = $(`filename-${kind}`);
-  const once = $(`once-${kind}`), limit = $(`limit-${kind}`), card = $(`card-${kind}`);
+  const once = $(`once-${kind}`), resume = $(`resume-${kind}`), limit = $(`limit-${kind}`), card = $(`card-${kind}`);
 
   const show = () => {
     sourceRadios.forEach((r) => { r.checked = r.value === s.source; });
@@ -61,16 +62,19 @@ function bindForm(kind) {
     url.value = s.url;
     fileName.textContent = s.fileName || 'No file yet';
     once.checked = s.once;
+    resume.checked = s.resume;
     limit.value = s.limitSec ?? '';
   };
   sourceRadios.forEach((r) => r.addEventListener('change', () => { s.source = r.value; persist(); show(); }));
   url.addEventListener('input', () => { s.url = url.value; persist(); });
   once.addEventListener('change', () => { s.once = once.checked; persist(); });
+  resume.addEventListener('change', () => { s.resume = resume.checked; persist(); });
   limit.addEventListener('input', () => { const n = Number(limit.value); s.limitSec = n > 0 ? n : null; persist(); });
   file.addEventListener('change', async () => {
     const f = file.files[0];
     if (!f) return;
     await saveFile(kind, f);
+    blobs[kind] = f;
     s.fileName = f.name;
     persist();
     show();
@@ -83,19 +87,19 @@ async function buildPlayer(kind) {
   const opts = { loop: !s.once };
   let base;
   if (s.source === 'youtube') {
-    const id = parseVideoId(s.url);
-    if (!id) throw new Error(`${label(kind)}: paste a YouTube link.`);
-    if (yt[kind]) yt[kind].load(id, opts);
-    else { yt[kind] = await createPlayer(`player-${kind}`, id); yt[kind].load(id, opts); }
+    const target = parseYouTube(s.url);
+    if (!target) throw new Error(`${label(kind)}: paste a YouTube video or playlist link.`);
+    yt[kind] ??= await createPlayer(`player-${kind}`);
+    await yt[kind].load(target, opts);
     base = yt[kind];
   } else {
-    const blob = await loadFile(kind);
+    const blob = (blobs[kind] ??= await loadFile(kind));
     if (!blob) throw new Error(`${label(kind)}: choose an audio file.`);
     audio[kind] ??= createAudioPlayer(`audio-${kind}`);
     audio[kind].load(blob, opts);
     base = audio[kind];
   }
-  return withPolicy(base, { once: s.once, limitSec: s.limitSec });
+  return withPolicy(base, { limitSec: s.limitSec, resume: s.resume });
 }
 
 async function start() {

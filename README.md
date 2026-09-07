@@ -11,10 +11,11 @@ A Pomodoro timer locked to the wall clock. Press Start once and it loops all day
 
 Each track, work and break, has its own source and rules:
 
-- **Source**: a YouTube link, or an audio file from your disk. The file is kept
+- **Source**: a YouTube video or playlist link, or an audio file from your disk. The file is kept
   in the browser's IndexedDB, so it survives reloads on that browser.
-- **Play once**: restart from the beginning at each phase start and do not loop.
-  Off means loop, and resume from where it was paused.
+- **Play once**: do not loop. Off means loop.
+- **Resume where it left off**: continue from where the track was paused or cut.
+  Off means start from the beginning at each phase start.
 - **Stop after N seconds**: cut playback after N seconds each time it starts.
   Blank means no limit.
 
@@ -38,8 +39,8 @@ Debug clock: append `?at=HH:MM:SS` to pretend it is that time, e.g.
 
 - `schedule.js` — `phaseAt(date)` maps a time to `{ phase, endsAt, remainingMs }`.
 - `controller.js` — decides which player to play or pause on a phase change.
-- `policy.js` — wraps a player with the play-once and stop-after rules.
-- `youtube.js` — YouTube link parsing and a thin IFrame API wrapper.
+- `policy.js` — wraps a player with the resume and stop-after rules.
+- `youtube.js` — YouTube video and playlist link parsing, and a thin IFrame API wrapper.
 - `audio.js` — a hidden `<audio>` element behind the same play/pause interface.
 - `settings.js` — load and save settings in `localStorage` with defaults.
 - `store.js` — save and load audio files in IndexedDB.
