@@ -21,6 +21,7 @@ const offset = (() => {
   return fake - Date.now();
 })();
 const now = () => new Date(Date.now() + offset);
+document.getElementById('clock-label').textContent = offset ? 'Pretend time' : 'Now';
 
 const settings = loadSettings(localStorage);
 const persist = () => saveSettings(localStorage, settings);
