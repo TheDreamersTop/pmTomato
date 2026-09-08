@@ -5,6 +5,7 @@ import { createController } from './controller.js';
 import { withPolicy } from './policy.js';
 import { loadSettings, saveSettings } from './settings.js';
 import { saveFile, loadFile } from './store.js';
+import { isSpaceToggle } from './hotkey.js';
 
 const KINDS = ['work', 'break'];
 const $ = (id) => document.getElementById(id);
@@ -130,5 +131,11 @@ function stop() {
 KINDS.forEach(bindForm);
 els.start.addEventListener('click', () => start().catch((e) => { say(e.message, true); els.start.disabled = false; }));
 els.stop.addEventListener('click', stop);
+document.addEventListener('keydown', (e) => {
+  if (!isSpaceToggle(e)) return;
+  e.preventDefault();
+  const btn = els.stop.disabled ? els.start : els.stop;
+  if (!btn.disabled) btn.click();
+});
 render();
 setInterval(render, 500);

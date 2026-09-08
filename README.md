@@ -28,6 +28,7 @@ At each boundary the app pauses one track and plays the other.
 ## Use
 
 Open `index.html` from a static server, set both tracks, press Start.
+Space also starts and stops, unless a text box has focus.
 Live at https://thedreamerstop.github.io/pmTomato/.
 
 ```bash
@@ -46,6 +47,7 @@ Debug clock: append `?at=HH:MM:SS` to pretend it is that time, e.g.
 - `audio.js` — a hidden `<audio>` element behind the same play/pause interface.
 - `settings.js` — load and save settings in `localStorage` with defaults.
 - `store.js` — save and load audio files in IndexedDB.
+- `hotkey.js` — decides when Space should toggle Start/Stop.
 - `app.js` — wires the form, ticker, and players together.
 - `tests/` — Vitest unit tests for the logic modules.
 
