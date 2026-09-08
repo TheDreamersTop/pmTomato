@@ -68,3 +68,5 @@ npm test
   user gesture.
 - Some YouTube videos refuse to embed. Pick another link if a player stays blank.
   Inside a playlist such entries are skipped.
+- GitHub Pages caches files for 10 minutes. After a deploy, hard reload the page
+  (Cmd+Shift+R on Mac) or the old code keeps running.
