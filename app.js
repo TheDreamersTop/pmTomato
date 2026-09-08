@@ -131,6 +131,11 @@ function stop() {
 KINDS.forEach(bindForm);
 els.start.addEventListener('click', () => start().catch((e) => { say(e.message, true); els.start.disabled = false; }));
 els.stop.addEventListener('click', stop);
+// Key presses inside a YouTube frame never reach the page. Hand focus back.
+window.addEventListener('blur', () => {
+  const a = document.activeElement;
+  if (a?.tagName === 'IFRAME') setTimeout(() => a.blur(), 0);
+});
 document.addEventListener('keydown', (e) => {
   if (!isSpaceToggle(e)) return;
   e.preventDefault();
