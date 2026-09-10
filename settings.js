@@ -1,6 +1,6 @@
 const KEY = 'pmTomato.settings';
 
-const track = (url) => ({ source: 'youtube', url, fileName: '', once: false, resume: true, limitSec: null });
+const track = (url) => ({ source: 'youtube', url, fileName: '', once: false, resume: true, limitSec: null, volume: 100 });
 
 export const DEFAULTS = {
   work: track(''),

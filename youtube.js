@@ -65,6 +65,7 @@ export async function createPlayer(elementId) {
       else player.loadVideoById(current.videoId);
     },
     pause: () => player.pauseVideo(),
+    setVolume: (v) => player.setVolume(v),
     seekTo(s) { if (current?.listId) player.playVideoAt(0); else player.seekTo(s, true); },
     // Resolves once the cue has settled. Calls made while a cue is in flight are dropped.
     async load(target, opts) {

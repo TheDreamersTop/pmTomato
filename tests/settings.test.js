@@ -10,7 +10,7 @@ describe('settings survive a reload and never lose a field', () => {
 
   it('saved settings come back unchanged', () => {
     const s = memStorage();
-    const mine = { work: { ...DEFAULTS.work, source: 'file', once: true, limitSec: 30 }, break: { ...DEFAULTS.break, url: 'x' } };
+    const mine = { work: { ...DEFAULTS.work, source: 'file', once: true, limitSec: 30, volume: 35 }, break: { ...DEFAULTS.break, url: 'x' } };
     saveSettings(s, mine);
     expect(loadSettings(s)).toEqual(mine);
   });
@@ -22,6 +22,7 @@ describe('settings survive a reload and never lose a field', () => {
     expect(got.work.url).toBe('old');
     expect(got.work.once).toBe(DEFAULTS.work.once);
     expect(got.work.resume).toBe(true);
+    expect(got.work.volume).toBe(100);
     expect(got.break).toEqual(DEFAULTS.break);
   });
 

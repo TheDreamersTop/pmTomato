@@ -20,6 +20,7 @@ Each track, work and break, has its own source and rules:
   beginning at each phase start.
 - **Stop after N seconds**: cut playback after N seconds each time it starts.
   Blank means no limit.
+- **Volume**: 0 to 100, applied live while playing.
 
 Every setting is saved as you change it and restored on reload.
 

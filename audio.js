@@ -9,6 +9,7 @@ export function createAudioPlayer(id) {
   return {
     play: () => el.play().catch(() => {}),
     pause: () => el.pause(),
+    setVolume: (v) => { el.volume = v / 100; },
     seekTo: (s) => { el.currentTime = s; },
     load(blob, opts) {
       el.loop = opts.loop;

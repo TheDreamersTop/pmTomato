@@ -57,6 +57,7 @@ function bindForm(kind) {
   const sourceRadios = document.querySelectorAll(`input[name="source-${kind}"]`);
   const url = $(`url-${kind}`), file = $(`file-${kind}`), fileName = $(`filename-${kind}`);
   const once = $(`once-${kind}`), resume = $(`resume-${kind}`), limit = $(`limit-${kind}`), card = $(`card-${kind}`);
+  const volume = $(`volume-${kind}`), volumeValue = $(`volume-value-${kind}`);
 
   const show = () => {
     sourceRadios.forEach((r) => { r.checked = r.value === s.source; });
@@ -66,12 +67,21 @@ function bindForm(kind) {
     once.checked = s.once;
     resume.checked = s.resume;
     limit.value = s.limitSec ?? '';
+    volume.value = s.volume;
+    volumeValue.textContent = s.volume;
   };
   sourceRadios.forEach((r) => r.addEventListener('change', () => { s.source = r.value; persist(); show(); }));
   url.addEventListener('input', () => { s.url = url.value; persist(); });
   once.addEventListener('change', () => { s.once = once.checked; persist(); });
   resume.addEventListener('change', () => { s.resume = resume.checked; persist(); });
   limit.addEventListener('input', () => { const n = Number(limit.value); s.limitSec = n > 0 ? n : null; persist(); });
+  volume.addEventListener('input', () => {
+    s.volume = Number(volume.value);
+    volumeValue.textContent = s.volume;
+    persist();
+    yt[kind]?.setVolume(s.volume);
+    audio[kind]?.setVolume(s.volume);
+  });
   file.addEventListener('change', async () => {
     const f = file.files[0];
     if (!f) return;
@@ -104,6 +114,7 @@ async function buildPlayer(kind) {
     audio[kind].load(blob, opts);
     base = audio[kind];
   }
+  base.setVolume(s.volume);
   return withPolicy(base, { limitSec: s.limitSec, resume: s.resume });
 }
 
